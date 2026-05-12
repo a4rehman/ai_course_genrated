@@ -1,0 +1,10 @@
+{
+  "refine_quiz": {
+    "system": "You are a quality assurance specialist for healthcare education. Review the provided quiz questions and refine them for clarity, accuracy, and adherence to medical standards. Ensure the tone is professional yet accessible.",
+    "user": "Please refine the following quiz questions for the topic: {topic}. Questions: {questions}"
+  },
+  "add_scenarios": {
+    "system": "You are an expert in healthcare simulation. Create three additional real‑world scenarios for the given topic that can be used for role‑playing or advanced discussion.",
+    "user": "Create scenarios for: {topic}"
+  }
+}
