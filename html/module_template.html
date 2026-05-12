@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson: {{topic}}</title>
+    <link rel="stylesheet" href="../../html/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    <style>
+        .lesson-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .markdown-content h1, .markdown-content h2 {
+            color: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+        .deeper-dive {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(var(--primary-h), 50%, 50%, 0.1);
+            border-left: 4px solid hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+            border-radius: 0 10px 10px 0;
+        }
+        .quiz-container {
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        .quiz-question {
+            margin-bottom: 25px;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .option-btn.correct {
+            background: #2ecc71 !important;
+            border-color: #2ecc71;
+        }
+        .option-btn.wrong {
+            background: #e74c3c !important;
+            border-color: #e74c3c;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #bdc3c7;
+            display: none;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="lesson-container">
+        <a href="../../html/index.html" class="back-btn">← Back to Course List</a>
+        
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div id="lessonProgress" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <p id="progressLabel">0% Completed</p>
+        </div>
+
+        <div class="markdown-content">
+            {{lesson_content_html}}
+        </div>
+
+        <div id="quizSection" class="quiz-container">
+            <h2>Knowledge Check</h2>
+            <div id="quizContent"></div>
+            <div id="quizResult" style="display:none;">
+                <h3>Quiz Complete!</h3>
+                <p id="scoreText"></p>
+                <button onclick="resetQuiz()" class="option-btn" style="text-align:center; background: var(--primary-l);">Retry Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {{quiz_data}};
+        let currentQuestion = 0;
+        let score = 0;
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContent');
+            container.innerHTML = '';
+            
+            if (currentQuestion >= quizData.length) {
+                showResults();
+                return;
+            }
+
+            const q = quizData[currentQuestion];
+            const qDiv = document.createElement('div');
+            qDiv.className = 'quiz-question';
+            qDiv.innerHTML = `
+                <h3>Question ${currentQuestion + 1} of ${quizData.length}</h3>
+                <p>${q.question}</p>
+                <div class="options">
+                    ${q.options.map((opt, i) => `
+                        <button class="option-btn" onclick="checkAnswer('${String.fromCharCode(65 + i)}', this)">
+                            ${String.fromCharCode(65 + i)}) ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="explanation" id="exp-${currentQuestion}">${q.explanation}</div>
+            `;
+            container.appendChild(qDiv);
+        }
+
+        function checkAnswer(selected, btn) {
+            const q = quizData[currentQuestion];
+            const explanation = document.getElementById(`exp-${currentQuestion}`);
+            explanation.style.display = 'block';
+            
+            const buttons = btn.parentElement.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if (selected === q.correct_option) {
+                btn.classList.add('correct');
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                // Highlight correct one
+                buttons.forEach(b => {
+                    if (b.innerText.startsWith(q.correct_option + ')')) {
+                        b.classList.add('correct');
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                updateProgress();
+                renderQuiz();
+            }, 2000);
+        }
+
+        function showResults() {
+            document.getElementById('quizContent').style.display = 'none';
+            const resultDiv = document.getElementById('quizResult');
+            resultDiv.style.display = 'block';
+            document.getElementById('scoreText').innerText = `You scored ${score} out of ${quizData.length}`;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('quizResult').style.display = 'none';
+            updateProgress();
+            renderQuiz();
+        }
+
+        function updateProgress() {
+            const prog = ((currentQuestion) / quizData.length) * 100;
+            document.getElementById('lessonProgress').style.width = prog + '%';
+            document.getElementById('progressLabel').innerText = Math.round(prog) + '% Completed';
+        }
+
+        // Initialize
+        renderQuiz();
+    </script>
+</body>
+</html>

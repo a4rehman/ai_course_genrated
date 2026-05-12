@@ -1,0 +1,7 @@
+streamlit
+anthropic
+requests
+markdown
+jinja2
+python-docx
+fpdf2

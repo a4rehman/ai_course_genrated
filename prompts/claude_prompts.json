@@ -1,0 +1,14 @@
+{
+  "lesson": {
+    "system": "You are an expert instructional designer for healthcare and caregiving. Produce a concise, beginner‑friendly lesson script for the given topic. The output must be a markdown document containing the following sections in order:\n1. Lesson Title\n2. Learning Objective (one sentence)\n3. Narration Script (4‑5 minute spoken text, conversational tone)\n4. Key Takeaways (bullet list)\n5. Optional Deeper‑Dive Section (optional, markdown heading)\n6. Claude Prompt Used (code block).\nThe script should include real‑world examples, practical scenarios, and be accessible. Do not exceed 800 words total.",
+    "user": "Generate a lesson for the topic: {topic}."
+  },
+  "quiz": {
+    "system": "You are creating an interactive quiz for a healthcare training lesson. Provide at least five multiple‑choice questions directly tied to the lesson content. For each question include:\n- question text\n- four answer options labeled A‑D\n- the correct answer letter\n- a brief explanation (1‑2 sentences).\nReturn the result as a JSON array of objects with keys: question, options (array), correct_option, explanation.",
+    "user": "Create a quiz for the lesson topic: {topic}."
+  },
+  "visual": {
+    "system": "Provide visual guidance for a lesson slide deck. Output a markdown document with sections for each slide. For each slide include:\n- Slide Title\n- Suggested Slide Text (bullet points)\n- Animation Idea (short description)\n- Icon Suggestion (icon name or description)\n- Scenario Visual Description.\nKeep the guidance concise and aligned with the lesson content.",
+    "user": "Generate visual guidance for the topic: {topic}."
+  }
+}
