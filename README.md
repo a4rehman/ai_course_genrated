@@ -38,10 +38,35 @@ training_project/
     └── quiz_assets/
 ```
 
-## Quick Start
-1. Install Python dependencies (`anthropic`, `requests`).
-2. Set your Claude API key in an environment variable `ANTHROPIC_API_KEY`.
-3. Run `python src/generate_modules.py` – it will populate the `modules/` directory and update `prompt_history.json`.
-4. Open `html/index.html` in a browser to explore the generated lessons.
+## Deployment & Usage
 
-The system is designed for extensibility – add new modules by updating `module_config.json` and re‑run the generator.
+### 🚀 Run on Streamlit (Live Demo)
+This project is ready to be deployed on **Streamlit Cloud**:
+1. Push this repository to GitHub (Done).
+2. Go to [share.streamlit.io](https://share.streamlit.io) and connect this repository.
+3. In the Streamlit App settings, add your `ANTHROPIC_API_KEY` to **Secrets** or enter it directly in the app sidebar.
+4. The app will allow you to generate modules, preview them, and manage the training suite from a beautiful web interface.
+
+### 💻 Local Development
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. **Setup Environment**:
+   Create a `.env` file with `ANTHROPIC_API_KEY=your_key_here`.
+3. **Run Streamlit**:
+   ```bash
+   streamlit run streamlit_app.py
+   ```
+4. **CLI Generation** (Optional):
+   ```bash
+   python src/generate_modules.py
+   ```
+
+## Folder Structure
+- `streamlit_app.py`: Main interactive dashboard.
+- `src/generate_modules.py`: Core logic for calling Claude API.
+- `prompts/`: System and user prompt templates.
+- `html/`: UI templates and styles for the generated lessons.
+- `modules/`: (Generated) Contains the training content for each topic.
+- `assets/` & `docs/`: Placeholders for icons, illustrations, and exported documents.
