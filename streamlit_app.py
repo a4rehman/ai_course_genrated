@@ -81,7 +81,7 @@ PROMPTS = json.loads(PROMPTS_FILE.read_text(encoding="utf-8"))
 # ── Sidebar ────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### 🏥 Healthcare Training Gen")
-    st.caption("Powered by Google Gemini 2.0 Flash")
+    st.caption("Powered by Google Gemini AI")
     st.divider()
 
     # API Key — try secrets, then env, then manual input
@@ -115,14 +115,22 @@ with st.sidebar:
     selected_courses = st.multiselect(
         "📚 Select Modules to Generate",
         COURSE_LIST,
-        default=COURSE_LIST[:2],  # Default to first 2 to avoid long generation time
+        default=COURSE_LIST[:2],
     )
-    st.caption(f"{len(selected_courses)} module(s) selected")
+    
+    st.divider()
+    selected_model = st.selectbox(
+        "🤖 Select AI Model",
+        ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"],
+        index=0,
+        help="Use '1.5-flash' if you get quota/rate limit errors with '2.0-flash'."
+    )
+    st.caption(f"Using {selected_model}")
 
 # ── Gemini Call ────────────────────────────────────────────────────
-def call_gemini(system: str, user: str) -> str:
+def call_gemini(system: str, user: str, model_name: str) -> str:
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash", system_instruction=system)
+        model = genai.GenerativeModel(model_name, system_instruction=system)
         response = model.generate_content(user)
         return response.text
     except Exception as e:
@@ -135,11 +143,11 @@ def generate_module(topic: str, m_id: int):
 
     with st.status(f"⚙️ Generating: {topic}", expanded=True) as status:
         st.write("📖 Writing lesson content...")
-        lesson = call_gemini(PROMPTS["lesson"]["system"], PROMPTS["lesson"]["user"].format(topic=topic))
+        lesson = call_gemini(PROMPTS["lesson"]["system"], PROMPTS["lesson"]["user"].format(topic=topic), selected_model)
         (m_path / "lesson.md").write_text(lesson, encoding="utf-8")
 
         st.write("❓ Creating quiz questions...")
-        quiz_raw = call_gemini(PROMPTS["quiz"]["system"], PROMPTS["quiz"]["user"].format(topic=topic))
+        quiz_raw = call_gemini(PROMPTS["quiz"]["system"], PROMPTS["quiz"]["user"].format(topic=topic), selected_model)
         quiz_raw = quiz_raw.replace("```json", "").replace("```", "").strip()
         try:
             quiz_data = json.loads(quiz_raw)
@@ -148,7 +156,7 @@ def generate_module(topic: str, m_id: int):
         (m_path / "quiz.json").write_text(json.dumps(quiz_data, indent=2, ensure_ascii=False), encoding="utf-8")
 
         st.write("🎨 Generating slide visual guidance...")
-        visuals = call_gemini(PROMPTS["visual"]["system"], PROMPTS["visual"]["user"].format(topic=topic))
+        visuals = call_gemini(PROMPTS["visual"]["system"], PROMPTS["visual"]["user"].format(topic=topic), selected_model)
         (m_path / "visual.md").write_text(visuals, encoding="utf-8")
 
         status.update(label=f"✅ {topic} — Done!", state="complete")
@@ -186,7 +194,7 @@ with tab_gen:
                     st.rerun()
                 except RuntimeError as e:
                     st.error(f"❌ {e}")
-                    st.info("💡 If the error says 'NotFound', make sure your API key is valid and has access to Gemini 2.0 Flash.")
+                    st.info("💡 If the error says 'NotFound' or 'Quota Exceeded', try switching the model in the sidebar.")
 
 # ── Tab 2: Module Library ──────────────────────────────────────────
 with tab_lib:
@@ -365,6 +373,6 @@ with tab_quiz:
 st.markdown('<hr class="gradient-divider">', unsafe_allow_html=True)
 st.markdown(
     '<p style="text-align:center; color:#374151; font-size:0.83rem;">'
-    '🏥 AI Healthcare Training Generator &nbsp;|&nbsp; Powered by Google Gemini 2.0 Flash</p>',
+    '🏥 AI Healthcare Training Generator &nbsp;|&nbsp; Powered by Google Gemini AI</p>',
     unsafe_allow_html=True,
 )
