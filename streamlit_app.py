@@ -121,9 +121,9 @@ with st.sidebar:
     st.divider()
     selected_model = st.selectbox(
         "🤖 Select AI Model",
-        ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"],
+        ["gemini-3-flash", "gemini-2.5-flash", "gemini-1.5-flash", "gemini-1.5-pro"],
         index=0,
-        help="Use '1.5-flash' if you get quota/rate limit errors with '2.0-flash'."
+        help="Use the model that has active quota in your Google AI Studio dashboard."
     )
     st.caption(f"Using {selected_model}")
 
