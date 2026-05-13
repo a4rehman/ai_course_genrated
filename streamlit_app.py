@@ -63,6 +63,7 @@ section[data-testid="stSidebar"] { background: #111827 !important; border-right:
 
 div[data-testid="stTabs"] button { color: #9CA3AF; font-weight: 500; }
 div[data-testid="stTabs"] button[aria-selected="true"] { color: #818CF8 !important; border-bottom-color: #6366F1 !important; }
+    button[data-testid="stTextInputPasswordVisibilityToggle"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
