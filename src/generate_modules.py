@@ -20,7 +20,7 @@ if not GEMINI_API_KEY:
     raise EnvironmentError("Please set Gemini_API_Key in your .env file.")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 # -----------------------------------------------------------------------------
 # Prompt templates
@@ -34,7 +34,7 @@ def call_gemini(system_prompt: str, user_prompt: str) -> str:
     # Combine system and user prompt for Gemini if needed, 
     # but Gemini 1.5 Pro/Flash supports system_instruction.
     chat = genai.GenerativeModel(
-        model_name='gemini-1.5-flash',
+        model_name='gemini-2.0-flash',
         system_instruction=system_prompt
     )
     response = chat.generate_content(user_prompt)
@@ -77,7 +77,7 @@ def generate_module(module_id: int, topic: str) -> None:
     if history_path.exists():
         try: history = json.loads(history_path.read_text(encoding="utf-8"))
         except: pass
-    history.append({"module_id": module_id, "topic": topic, "model": "gemini-1.5-flash"})
+    history.append({"module_id": module_id, "topic": topic, "model": "gemini-2.0-flash"})
     history_path.write_text(json.dumps(history, indent=2), encoding="utf-8")
 
 def main() -> None:
