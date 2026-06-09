@@ -93,17 +93,12 @@ with st.sidebar:
     st.divider()
 
     # API Key — try secrets, then env, then manual input
-    _secret_key = ""
-    try:
-        _secret_key = st.secrets.get("Gemini_API_Key", "")
-    except Exception:
-        pass
-    gemini_key = st.text_input(
-        "🔑 Google Gemini API Key",
-        value=_secret_key or os.getenv("Gemini_API_Key", ""),
-        type="password",
-        help="API key is masked for security."
-    )
+    # Load API Key from Streamlit Secrets only
+gemini_key = st.secrets["Gemini_API_Key"]
+
+genai.configure(api_key=gemini_key)
+
+st.success("✅ AI Service Connected")
     if gemini_key:
         genai.configure(api_key=gemini_key)
         st.success("API Key configured ✓", icon="✅")
