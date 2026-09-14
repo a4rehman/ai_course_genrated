@@ -94,11 +94,7 @@ with st.sidebar:
 
     # API Key — try secrets, then env, then manual input
     # Load API Key from Streamlit Secrets only
-gemini_key = st.secrets["Gemini_API_Key"]
-
-genai.configure(api_key=gemini_key)
-
-st.success("✅ AI Service Connected")
+    gemini_key = st.secrets.get("Gemini_API_Key", "")
     if gemini_key:
         genai.configure(api_key=gemini_key)
         st.success("API Key configured ✓", icon="✅")
