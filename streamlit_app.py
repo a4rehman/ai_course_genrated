@@ -93,11 +93,34 @@ with st.sidebar:
     st.divider()
 
     # API Key — try secrets, then env, then manual input
-    # Load API Key from Streamlit Secrets only
-    gemini_key = st.secrets.get("Gemini_API_Key", "")
+    secret_key = ""
+    try:
+        if hasattr(st, "secrets"):
+            for k in ["Gemini_API_Key", "GEMINI_API_KEY", "GOOGLE_API_KEY", "gemini_api_key"]:
+                if k in st.secrets:
+                    secret_key = str(st.secrets[k]).strip()
+                    break
+    except Exception:
+        pass
+
+    if not secret_key:
+        secret_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or os.getenv("Gemini_API_Key") or ""
+
+    user_api_key = st.text_input(
+        "Gemini API Key",
+        value=secret_key,
+        type="password",
+        placeholder="AIzaSy...",
+        help="Get a free Gemini API Key at aistudio.google.com"
+    )
+
+    gemini_key = user_api_key.strip()
     if gemini_key:
-        genai.configure(api_key=gemini_key)
-        st.success("API Key configured ✓", icon="✅")
+        try:
+            genai.configure(api_key=gemini_key)
+            st.success("API Key configured ✓", icon="✅")
+        except Exception as e:
+            st.error(f"Error configuring API: {e}")
     else:
         st.warning("Enter your Gemini API Key to start.")
 
